@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110002, 11503, 40400
 ## Title: GreyVendorTrash
 ## Version: 1.0.0
 ## Author: StormtrooperTK421, GoldpawForever
