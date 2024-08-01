@@ -13,4 +13,4 @@ A World of Warcraft addon that automatically greys out poor quality (vendor tras
 
 - Add options for allowing players to set their preferred level of grey/darkness
 
-Updated, uploaded, and maintained (at least for now) by StormtrooperTK421 on GitHub. Please submit issues and I'll do my best to troubleshoot, replicate, and resolve issues as my limited abilities allow.
+Updated, uploaded, and maintained (at least for now) by [StormtrooperTK421](https://discordapp.com/users/237746068844969994) on [GitHub](https://github.com/DustinChecketts/GreyVendorTrash). Please submit issues and I'll do my best to troubleshoot, replicate, and resolve issues as my limited abilities allow.
