@@ -1,0 +1,9 @@
+## Interface: 110002
+## Title: GreyVendorTrash
+## Version: 1.0.0
+## Author: StormtrooperTK421, GoldpawForever
+## Notes: Items of poor (grey) quality (vendor trash) will have their icons greyed out for easy identification
+## DefaultState: enabled
+## X-Curse-Project-ID:
+
+GreyVendorTrash.lua
