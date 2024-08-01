@@ -4,6 +4,7 @@ A World of Warcraft addon that automatically greys out poor quality (vendor tras
 <h4>Features</h4>
 
 - Easy, no-frills, no options, just install it and it works, addon
+- Supports all current versions of World of Warcraft
 
 <h4>Acknowledgements</h4>
 
