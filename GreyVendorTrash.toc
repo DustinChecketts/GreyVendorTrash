@@ -4,6 +4,6 @@
 ## Author: StormtrooperTK421, GoldpawForever
 ## Notes: Items of poor (grey) quality (vendor trash) will have their icons greyed out for easy identification
 ## DefaultState: enabled
-## X-Curse-Project-ID:
+## X-Curse-Project-ID: 1075824
 
 GreyVendorTrash.lua
