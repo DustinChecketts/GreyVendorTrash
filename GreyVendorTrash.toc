@@ -1,6 +1,6 @@
-## Interface: 110002, 11503, 40400
+## Interface: 110005, 11504, 40400
 ## Title: GreyVendorTrash
-## Version: 1.0.0
+## Version: 1.0.1
 ## Author: StormtrooperTK421, GoldpawForever
 ## Notes: Items of poor (grey) quality (vendor trash) will have their icons greyed out for easy identification
 ## DefaultState: enabled
