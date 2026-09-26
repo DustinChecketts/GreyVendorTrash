@@ -188,14 +188,9 @@ eventFrame:SetScript("OnEvent", function(_, event)
     GVT:RefreshAll()
 end)
 
-if SetItemButtonDesaturated then
-    hooksecurefunc("SetItemButtonDesaturated", function(button)
-        local bag, slot = Compat.GetBagAndSlot(button)
-        if bag ~= nil and slot ~= nil then
-            UpdateButton(button, bag, slot)
-        end
-    end)
-end
+-- Do not hook global item-button styling functions here. Merchant, buyback,
+-- bank and guild-bank UIs share them with bags; bag refresh hooks/events above
+-- give us all the coverage we need without leaking styling into other frames.
 
 GVT.UpdateButton = UpdateButton
 GVT.UpdateContainer = UpdateContainer
