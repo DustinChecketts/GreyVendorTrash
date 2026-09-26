@@ -1,9 +1,12 @@
-## Interface: 110005, 11509, 40400, 50500, 20506
+## Interface: 110005, 11509, 40400, 50500, 20506, 16001
 ## Title: GreyVendorTrash
-## Version: 1.0.6
+## Version: 1.1.0
 ## Author: StormtrooperTK421, GoldpawForever
-## Notes: Items of poor (grey) quality (vendor trash) will have their icons greyed out for easy identification
+## Notes: Makes poor-quality vendor trash easy to identify in your bags
 ## DefaultState: enabled
+## SavedVariables: GreyVendorTrashDB
 ## X-Curse-Project-ID: 1075824
 
+Compat.lua
+Options.lua
 GreyVendorTrash.lua

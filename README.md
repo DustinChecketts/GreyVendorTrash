@@ -1,17 +1,35 @@
 # GreyVendorTrash
-A World of Warcraft addon that automatically greys out poor quality (vendor trash) items in your bags for easy identification.
 
-<h4>Features</h4>
+Poor-quality vendor trash should be easy to spot before you ever reach a vendor.
 
-- Easy, no-frills, no options, just install it and it works, addon
-- Supports all current versions of World of Warcraft
+GreyVendorTrash is a lightweight World of Warcraft addon that makes poor-quality items immediately identifiable in your bags while leaving merchants, banks, guild banks, and other item displays untouched.
 
-<h4>Acknowledgements</h4>
+### **Features**
 
-- Originally released in 2022 as [Garbage Desaturation in Bags](https://www.curseforge.com/wow/addons/blizzardbags-garbage) by [GoldpawForever](https://www.curseforge.com/members/goldpawforever)
+- Desaturates poor-quality item icons in your bags
+- Adjustable greyscale darkness, with a 25% darker default
+- Optional Blizzard-native junk coin on trash items even when away from a vendor
+- Desaturation and coin display can be enabled independently
+- Only modifies player inventory bags
+- Lightweight and unobtrusive
+- Supports WoW Forever and existing supported Classic/Retail clients
 
-<h4>Known Issues / To-Do</h4>
+### **Options**
 
-- Add options for allowing players to set their preferred level of grey/darkness
+Open **Options > AddOns > GreyVendorTrash** or type `/gvt`.
 
-Updated, uploaded, and maintained (at least for now) by [StormtrooperTK421](https://discordapp.com/users/237746068844969994) on [GitHub](https://github.com/DustinChecketts/GreyVendorTrash). Please submit issues and I'll do my best to troubleshoot, replicate, and resolve issues as my limited abilities allow.
+You can:
+- Enable or disable trash-item desaturation
+- Adjust greyscale darkness from 0% to 75%
+- Show or hide Blizzard's junk coin outside merchants
+
+### **Commands**
+
+- `/gvt` — Open GreyVendorTrash options
+- `/gvt refresh` — Refresh visible bag styling
+
+### **Acknowledgements**
+
+Originally released in 2022 as [Garbage Desaturation in Bags](https://www.curseforge.com/wow/addons/blizzardbags-garbage) by [GoldpawForever](https://www.curseforge.com/members/goldpawforever).
+
+Updated and maintained by [StormtrooperTK421](https://github.com/DustinChecketts/GreyVendorTrash).
