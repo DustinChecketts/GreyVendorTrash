@@ -6,7 +6,7 @@ local GVT = GreyVendorTrash
 local DEFAULTS = {
     desaturate = true,
     alwaysShowCoin = false,
-    darkness = 0,
+    darkness = 0.25,
 }
 
 function GVT:EnsureSettingsDefaults()
@@ -100,7 +100,7 @@ local function CreateDarknessSlider(parent, y)
     note:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", -4, -18)
     note:SetWidth(520)
     note:SetJustifyH("LEFT")
-    note:SetText("Adds neutral shading over desaturated vendor-trash icons. 0% matches the normal greyscale appearance.")
+    note:SetText("Adds neutral shading over desaturated vendor-trash icons. 25% is the default; 0% matches the normal greyscale appearance.")
 
     return slider
 end
