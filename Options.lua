@@ -160,3 +160,15 @@ function GVT:OpenOptions()
         print("|cff33ff99GreyVendorTrash:|r options are available under AddOns settings.")
     end
 end
+
+-- Release slash commands. Diagnostics are development-only and are not packaged.
+SLASH_GREYVENDORTRASH1 = "/gvt"
+SlashCmdList.GREYVENDORTRASH = function(message)
+    message = (message or ""):lower():match("^%s*(.-)%s*$")
+    if message == "refresh" then
+        if GVT.RefreshAll then GVT:RefreshAll() end
+        print("|cff33ff99GreyVendorTrash:|r bags refreshed")
+    else
+        GVT:OpenOptions()
+    end
+end
