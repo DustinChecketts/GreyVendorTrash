@@ -6,6 +6,7 @@ local GVT = GreyVendorTrash
 local DEFAULTS = {
     desaturate = true,
     alwaysShowCoin = false,
+    darkness = 0,
 }
 
 function GVT:EnsureSettingsDefaults()
@@ -25,9 +26,14 @@ end
 function GVT:SetSetting(key, value)
     self:EnsureSettingsDefaults()
     GreyVendorTrashDB[key] = value and true or false
-    if self.RefreshAll then
-        self:RefreshAll()
-    end
+    if self.RefreshAll then self:RefreshAll() end
+end
+
+function GVT:SetDarkness(value)
+    self:EnsureSettingsDefaults()
+    value = tonumber(value) or 0
+    GreyVendorTrashDB.darkness = math.max(0, math.min(0.75, value))
+    if self.RefreshAll then self:RefreshAll() end
 end
 
 GVT:EnsureSettingsDefaults()
@@ -57,6 +63,48 @@ local function CreateCheck(parent, y, label, description, key)
     return check
 end
 
+local function CreateDarknessSlider(parent, y)
+    local heading = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    heading:SetPoint("TOPLEFT", 16, y)
+    heading:SetText("Greyscale darkness")
+
+    local valueText = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    valueText:SetPoint("LEFT", heading, "RIGHT", 8, 0)
+
+    local slider = CreateFrame("Slider", "GreyVendorTrashDarknessSlider", parent, "OptionsSliderTemplate")
+    slider:SetPoint("TOPLEFT", heading, "BOTTOMLEFT", 4, -16)
+    slider:SetWidth(260)
+    slider:SetMinMaxValues(0, 75)
+    slider:SetValueStep(5)
+    slider:SetObeyStepOnDrag(true)
+
+    _G[slider:GetName() .. "Low"]:SetText("Original")
+    _G[slider:GetName() .. "High"]:SetText("Darker")
+    _G[slider:GetName() .. "Text"]:SetText("")
+
+    local function UpdateValueText(percent)
+        valueText:SetText(string.format("%d%%", percent))
+    end
+
+    local initial = math.floor((tonumber(GVT:GetSetting("darkness")) or 0) * 100 + 0.5)
+    slider:SetValue(initial)
+    UpdateValueText(initial)
+
+    slider:SetScript("OnValueChanged", function(_, value)
+        local rounded = math.floor(value / 5 + 0.5) * 5
+        UpdateValueText(rounded)
+        GVT:SetDarkness(rounded / 100)
+    end)
+
+    local note = parent:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+    note:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", -4, -18)
+    note:SetWidth(520)
+    note:SetJustifyH("LEFT")
+    note:SetText("Adds neutral shading over desaturated vendor-trash icons. 0% matches the normal greyscale appearance.")
+
+    return slider
+end
+
 local function InitializePanel(self)
     if self.initialized then return end
     self.initialized = true
@@ -76,18 +124,20 @@ local function InitializePanel(self)
         "desaturate"
     )
 
+    CreateDarknessSlider(self, -145)
+
     CreateCheck(
-        self, -142,
+        self, -260,
         "Show the vendor coin outside merchants",
-        "Keeps a small coin marker on vendor trash while you are away from a vendor. At a merchant, Blizzard's native junk marker is left in control.",
+        "Keeps Blizzard's native junk coin visible on vendor trash even when you are away from a vendor.",
         "alwaysShowCoin"
     )
 
     local hint = self:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-    hint:SetPoint("TOPLEFT", 16, -218)
+    hint:SetPoint("TOPLEFT", 16, -338)
     hint:SetWidth(540)
     hint:SetJustifyH("LEFT")
-    hint:SetText("The two options are independent: use desaturation, the coin marker, or both. /gvt opens this panel; /gvt diag prints Forever diagnostics.")
+    hint:SetText("Desaturation, darkness and the coin marker can be combined to your preference. /gvt opens this panel; /gvt diag prints Forever diagnostics.")
 end
 
 panel:SetScript("OnShow", InitializePanel)
