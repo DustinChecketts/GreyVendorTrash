@@ -44,6 +44,8 @@ if GreyVendorTrash and GreyVendorTrash.UseForeverImplementation then return end
 
 -- Retrive addon folder name, and our local, private namespace.
 local Addon, Private = ...
+GreyVendorTrash = GreyVendorTrash or {}
+local GVT = GreyVendorTrash
 
 -- Lua API
 local _G = _G
@@ -65,6 +67,27 @@ local C_Container_GetContainerItemInfo = C_Container and C_Container.GetContaine
 -- globally available so addons can share it.
 local Cache = GP_ItemButtonInfoFrameCache or {}
 GP_ItemButtonInfoFrameCache = Cache
+
+local function GetSetting(key, fallback)
+	if GVT.GetSetting then
+		local value = GVT:GetSetting(key)
+		if value ~= nil then return value end
+	end
+	return fallback
+end
+
+-- Classic/TBC owns its coin texture. It is deliberately independent of the
+-- legacy desaturation/garbage overlay so enabling it cannot alter icon color.
+local function GetCoin(container, button)
+	if container.gvtCoin then return container.gvtCoin end
+	local coin = button:CreateTexture(nil, "OVERLAY", nil, 7)
+	coin:SetTexture("Interface\\MoneyFrame\\UI-GoldIcon")
+	coin:SetSize(12, 12)
+	coin:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
+	coin:Hide()
+	container.gvtCoin = coin
+	return coin
+end
 
 -- Callbacks
 -----------------------------------------------------------
@@ -112,14 +135,24 @@ local Update = function(self, bag, slot)
 			container.garbage:SetColorTexture((51/255)*.2, (17/255)*.2, (6/255)*.2, .25)
 		end
 
-		container.garbage:Show()
-		container.garbage.icon:SetDesaturated(true)
+		local desaturate = GetSetting("desaturate", true)
+		local darkness = tonumber(GetSetting("darkness", .25)) or .25
+		darkness = math.max(0, math.min(.75, darkness))
+
+		-- Preserve the known-good legacy RGB treatment. Only its alpha changes.
+		-- At the default .25 this is exactly the pre-Forever visual value.
+		container.garbage:SetColorTexture((51/255)*.2, (17/255)*.2, (6/255)*.2, darkness)
+		container.garbage:SetShown(desaturate and darkness > 0)
+		container.garbage.icon:SetDesaturated(desaturate)
+
+		GetCoin(container, self):SetShown(GetSetting("alwaysShowCoin", false))
 
 	else
 		local cache = Cache[self]
 		if (cache and cache.garbage) then
 			cache.garbage:Hide()
 			cache.garbage.icon:SetDesaturated(locked)
+			if cache.gvtCoin then cache.gvtCoin:Hide() end
 		end
 	end
 end
@@ -148,6 +181,7 @@ local UpdateContainer = function(self)
 			if (cache and cache.garbage) then
 				cache.garbage:Hide()
 				cache.garbage.icon:SetDesaturated(false)
+				if cache.gvtCoin then cache.gvtCoin:Hide() end
 			end
 		end
 		id = id + 1
@@ -167,6 +201,7 @@ local UpdateCombinedContainer = function(self)
 				if (cache and cache.garbage) then
 					cache.garbage:Hide()
 					cache.garbage.icon:SetDesaturated(false)
+				if cache.gvtCoin then cache.gvtCoin:Hide() end
 				end
 			end
 		end
@@ -180,43 +215,9 @@ local UpdateCombinedContainer = function(self)
 				if (cache and cache.garbage) then
 					cache.garbage:Hide()
 					cache.garbage.icon:SetDesaturated(false)
+				if cache.gvtCoin then cache.gvtCoin:Hide() end
 				end
 			end
-		end
-	end
-end
-
--- Parse the main bankframe
-local UpdateBank = function()
-	local BankSlotsFrame = BankSlotsFrame
-	local bag = BankSlotsFrame:GetID()
-	for id = 1, NUM_BANKGENERIC_SLOTS do
-		local button = BankSlotsFrame["Item"..id]
-		if (button and not button.isBag) then
-			if (button.hasItem) then
-				Update(button, bag, button:GetID())
-			else
-				local cache = Cache[button]
-				if (cache and cache.garbage) then
-					cache.garbage:Hide()
-					cache.garbage.icon:SetDesaturated(false)
-				end
-			end
-		end
-	end
-end
-
--- Update a single bank button, needed for classics
-local UpdateBankButton = function(self)
-	if (self and not self.isBag) then
-		-- Always run a full update here,
-		-- as the .hasItem flag might not have been set yet.
-		Update(self, BankSlotsFrame:GetID(), self:GetID())
-	else
-		local cache = Cache[button]
-		if (cache and cache.garbage) then
-			cache.garbage:Hide()
-			cache.garbage.icon:SetDesaturated(false)
 		end
 	end
 end
@@ -245,6 +246,10 @@ local UpdateAll = function(self)
 	end
 end
 
+function GVT:RefreshAll()
+	UpdateAll()
+end
+
 -- Addon Core
 -----------------------------------------------------------
 -- Your event handler.
@@ -252,17 +257,7 @@ end
 -- @input event <string> The name of the event that fired.
 -- @input ... <misc> Any payloads passed by the event handlers.
 Private.OnEvent = function(self, event, ...)
-	if (event == "PLAYERBANKSLOTS_CHANGED") then
-		local slot = ...
-		if (slot <= NUM_BANKGENERIC_SLOTS) then
-			local button = BankSlotsFrame["Item"..slot]
-			if (button and not button.isBag) then
-				-- Always run a full update here,
-				-- as the .hasItem flag might not have been set yet.
-				Update(button, BankSlotsFrame:GetID(), button:GetID())
-			end
-		end
-	elseif (event == "ITEM_UNLOCKED") then
+	if (event == "ITEM_UNLOCKED") then
 		local bagID, slotID = ...
 		if (not slotID) then return end
 		if (ContainerFrame_Update) then
@@ -280,6 +275,7 @@ Private.OnEvent = function(self, event, ...)
 								if (cache and cache.garbage) then
 									cache.garbage:Hide()
 									cache.garbage.icon:SetDesaturated(false)
+				if cache.gvtCoin then cache.gvtCoin:Hide() end
 								end
 							end
 						end
@@ -300,6 +296,7 @@ Private.OnEvent = function(self, event, ...)
 								if (cache and cache.garbage) then
 									cache.garbage:Hide()
 									cache.garbage.icon:SetDesaturated(false)
+				if cache.gvtCoin then cache.gvtCoin:Hide() end
 								end
 							end
 							return
@@ -321,6 +318,7 @@ Private.OnEvent = function(self, event, ...)
 								if (cache and cache.garbage) then
 									cache.garbage:Hide()
 									cache.garbage.icon:SetDesaturated(false)
+				if cache.gvtCoin then cache.gvtCoin:Hide() end
 								end
 							end
 						end
@@ -358,25 +356,12 @@ Private.OnEnable = function(self)
 		hooksecurefunc(ContainerFrameCombinedBags, "Update", UpdateCombinedContainer)
 	end
 
-	-- Shadowlands and up
-	if (BankFrame_UpdateItems) then
-		hooksecurefunc("BankFrame_UpdateItems", UpdateBank)
-
-	-- Classics
-	elseif (BankFrameItemButton_UpdateLocked) then
-		-- This is called from within BankFrameItemButton_Update,
-		-- and thus works as an update for both.
-		hooksecurefunc("BankFrameItemButton_UpdateLocked", UpdateBankButton)
-	end
+	-- Player inventory bags only. Bank/vendor/buyback frames are intentionally
+	-- outside GreyVendorTrash's presentation scope.
 
 	-- For single item changes
-	self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
 	self:RegisterEvent("ITEM_UNLOCKED")
 
-	-- To avoid weird double desaturation
-	if (SetItemButtonDesaturated) then
-		hooksecurefunc("SetItemButtonDesaturated", UpdateLock)
-	end
 
 end
 
