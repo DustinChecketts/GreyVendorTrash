@@ -1,6 +1,6 @@
 ## Interface: 110005, 11509, 40400, 50500, 20506, 16001
 ## Title: GreyVendorTrash
-## Version: 1.1.1-test.3
+## Version: 1.1.1-test.4
 ## Author: StormtrooperTK421, GoldpawForever
 ## Notes: Makes poor-quality vendor trash easy to identify in your bags
 ## DefaultState: enabled
