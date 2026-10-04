@@ -188,9 +188,18 @@ eventFrame:SetScript("OnEvent", function(_, event)
     GVT:RefreshAll()
 end)
 
--- Do not hook global item-button styling functions here. Merchant, buyback,
--- bank and guild-bank UIs share them with bags; bag refresh hooks/events above
--- give us all the coverage we need without leaking styling into other frames.
+-- Classic/TBC can call SetItemButtonDesaturated after ContainerFrame_Update,
+-- overwriting our greyscale. Reapply only to buttons already cached from a
+-- verified player bag, so other item UIs can never enter this path.
+if SetItemButtonDesaturated then
+    hooksecurefunc("SetItemButtonDesaturated", function(button)
+        if not Cache[button] then return end
+        local bag, slot = Compat.GetBagAndSlot(button)
+        if IsPlayerBag(bag) and slot ~= nil then
+            UpdateButton(button, bag, slot)
+        end
+    end)
+end
 
 GVT.UpdateButton = UpdateButton
 GVT.UpdateContainer = UpdateContainer
