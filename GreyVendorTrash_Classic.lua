@@ -362,6 +362,11 @@ Private.OnEnable = function(self)
 	-- For single item changes
 	self:RegisterEvent("ITEM_UNLOCKED")
 
+	-- Preserve the original Classic/TBC lock-state refresh path. Because this
+	-- renderer no longer caches bank buttons, the hook remains bag-scoped.
+	if (SetItemButtonDesaturated) then
+		hooksecurefunc("SetItemButtonDesaturated", UpdateLock)
+	end
 
 end
 
