@@ -3,6 +3,10 @@
 GreyVendorTrash = GreyVendorTrash or {}
 local GVT = GreyVendorTrash
 
+-- New settings belong to WoW Forever only. Classic/TBC intentionally keeps
+-- the original proven GreyVendorTrash behavior with no options integration.
+if not GVT.UseForeverImplementation then return end
+
 local DEFAULTS = {
     desaturate = true,
     alwaysShowCoin = false,
@@ -129,9 +133,7 @@ local function InitializePanel(self)
     CreateCheck(
         self, -260,
         "Show the vendor coin outside merchants",
-        GVT.UseForeverImplementation
-            and "Keeps Blizzard's native junk coin visible on vendor trash even when you are away from a vendor."
-            or "Shows a gold coin marker on vendor trash in your bags.",
+        "Keeps Blizzard's native junk coin visible on vendor trash even when you are away from a vendor.",
         "alwaysShowCoin"
     )
 
