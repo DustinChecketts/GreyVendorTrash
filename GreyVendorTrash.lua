@@ -42,6 +42,17 @@ local function SetNativeJunkIcon(button, shown)
     return false
 end
 
+local function SetButtonDesaturated(button, icon, desaturated)
+    -- Classic/TBC bag buttons can have Blizzard-managed icon regions where
+    -- calling SetDesaturated directly on button.Icon is not the authoritative
+    -- path. Use Blizzard's helper when available, matching the original addon.
+    if SetItemButtonDesaturated then
+        SetItemButtonDesaturated(button, desaturated)
+    elseif icon and icon.SetDesaturated then
+        icon:SetDesaturated(desaturated)
+    end
+end
+
 local function ClearButton(button)
     local state = Cache[button]
     local icon = Compat.GetItemButtonIcon(button)
@@ -51,7 +62,7 @@ local function ClearButton(button)
     end
 
     if icon then
-        icon:SetDesaturated(false)
+        SetButtonDesaturated(button, icon, false)
     end
 
     -- Never leave an addon-forced junk icon behind on a recycled bag button.
@@ -81,9 +92,9 @@ local function UpdateButton(button, bag, slot)
     local desaturate = GVT:GetSetting("desaturate")
 
     if desaturate then
-        icon:SetDesaturated(isTrash or locked)
+        SetButtonDesaturated(button, icon, isTrash or locked)
     else
-        icon:SetDesaturated(locked)
+        SetButtonDesaturated(button, icon, locked)
     end
 
     -- Optional darkness is applied as a neutral black overlay so the slider
