@@ -1,3 +1,5 @@
+if not (GreyVendorTrash and GreyVendorTrash.UseForeverImplementation) then return end
+
 -- GreyVendorTrash core bag behavior.
 -- Client/API differences belong in Compat.lua; settings UI belongs in Options.lua.
 
