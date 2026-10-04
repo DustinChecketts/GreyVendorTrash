@@ -44,17 +44,6 @@ local function SetNativeJunkIcon(button, shown)
     return false
 end
 
-local function SetButtonDesaturated(button, icon, desaturated)
-    -- Classic/TBC bag buttons can have Blizzard-managed icon regions where
-    -- calling SetDesaturated directly on button.Icon is not the authoritative
-    -- path. Use Blizzard's helper when available, matching the original addon.
-    if SetItemButtonDesaturated then
-        SetItemButtonDesaturated(button, desaturated)
-    elseif icon and icon.SetDesaturated then
-        icon:SetDesaturated(desaturated)
-    end
-end
-
 local function ClearButton(button)
     local state = Cache[button]
     local icon = Compat.GetItemButtonIcon(button)
@@ -64,7 +53,7 @@ local function ClearButton(button)
     end
 
     if icon then
-        SetButtonDesaturated(button, icon, false)
+        icon:SetDesaturated(false)
     end
 
     -- Never leave an addon-forced junk icon behind on a recycled bag button.
@@ -94,9 +83,9 @@ local function UpdateButton(button, bag, slot)
     local desaturate = GVT:GetSetting("desaturate")
 
     if desaturate then
-        SetButtonDesaturated(button, icon, isTrash or locked)
+        icon:SetDesaturated(isTrash or locked)
     else
-        SetButtonDesaturated(button, icon, locked)
+        icon:SetDesaturated(locked)
     end
 
     -- Optional darkness is applied as a neutral black overlay so the slider
@@ -200,19 +189,6 @@ eventFrame:SetScript("OnEvent", function(_, event)
 
     GVT:RefreshAll()
 end)
-
--- Classic/TBC can call SetItemButtonDesaturated after ContainerFrame_Update,
--- overwriting our greyscale. Reapply only to buttons already cached from a
--- verified player bag, so other item UIs can never enter this path.
-if SetItemButtonDesaturated then
-    hooksecurefunc("SetItemButtonDesaturated", function(button)
-        if not Cache[button] then return end
-        local bag, slot = Compat.GetBagAndSlot(button)
-        if IsPlayerBag(bag) and slot ~= nil then
-            UpdateButton(button, bag, slot)
-        end
-    end)
-end
 
 GVT.UpdateButton = UpdateButton
 GVT.UpdateContainer = UpdateContainer
