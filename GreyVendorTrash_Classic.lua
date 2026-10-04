@@ -1,3 +1,5 @@
+if GreyVendorTrash and GreyVendorTrash.UseForeverImplementation then return end
+
 --[[
 
 	I'm re-releasing this addon because I believe this is a must-have addon
