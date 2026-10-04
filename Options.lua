@@ -3,10 +3,6 @@
 GreyVendorTrash = GreyVendorTrash or {}
 local GVT = GreyVendorTrash
 
--- New settings belong to WoW Forever only. Classic/TBC intentionally keeps
--- the original proven GreyVendorTrash behavior with no options integration.
-if not GVT.UseForeverImplementation then return end
-
 local DEFAULTS = {
     desaturate = true,
     alwaysShowCoin = false,
@@ -30,6 +26,12 @@ end
 function GVT:SetSetting(key, value)
     self:EnsureSettingsDefaults()
     GreyVendorTrashDB[key] = value and true or false
+    if self.RefreshAll then self:RefreshAll() end
+end
+
+function GVT:ResetSettings()
+    GreyVendorTrashDB = {}
+    self:EnsureSettingsDefaults()
     if self.RefreshAll then self:RefreshAll() end
 end
 
@@ -104,7 +106,7 @@ local function CreateDarknessSlider(parent, y)
     note:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", -4, -18)
     note:SetWidth(520)
     note:SetJustifyH("LEFT")
-    note:SetText("Adds neutral shading over desaturated vendor-trash icons. 25% is the default; 0% matches the normal greyscale appearance.")
+    note:SetText("Controls additional shading on desaturated vendor-trash icons. 25% is the default appearance.")
 
     return slider
 end
@@ -132,13 +134,24 @@ local function InitializePanel(self)
 
     CreateCheck(
         self, -260,
-        "Show the vendor coin outside merchants",
-        "Keeps Blizzard's native junk coin visible on vendor trash even when you are away from a vendor.",
+        "Show vendor coin",
+        "Shows a gold coin marker on vendor trash in your bags.",
         "alwaysShowCoin"
     )
 
+    local defaults = CreateFrame("Button", nil, self, "UIPanelButtonTemplate")
+    defaults:SetSize(96, 22)
+    defaults:SetPoint("TOPLEFT", 16, -326)
+    defaults:SetText("Defaults")
+    defaults:SetScript("OnClick", function()
+        GVT:ResetSettings()
+        self.initialized = nil
+        self:Hide()
+        self:Show()
+    end)
+
     local hint = self:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-    hint:SetPoint("TOPLEFT", 16, -338)
+    hint:SetPoint("TOPLEFT", 16, -362)
     hint:SetWidth(540)
     hint:SetJustifyH("LEFT")
     hint:SetText("Desaturation, darkness and the coin marker can be combined to your preference. /gvt opens this panel.")
