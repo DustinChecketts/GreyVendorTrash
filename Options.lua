@@ -3,10 +3,6 @@
 GreyVendorTrash = GreyVendorTrash or {}
 local GVT = GreyVendorTrash
 
--- The settings UI belongs to the Forever implementation. Classic/TBC keeps
--- the proven pre-Forever behavior unchanged.
-if not GVT.UseForeverImplementation then return end
-
 local DEFAULTS = {
     desaturate = true,
     alwaysShowCoin = false,
@@ -133,7 +129,9 @@ local function InitializePanel(self)
     CreateCheck(
         self, -260,
         "Show the vendor coin outside merchants",
-        "Keeps Blizzard's native junk coin visible on vendor trash even when you are away from a vendor.",
+        GVT.UseForeverImplementation
+            and "Keeps Blizzard's native junk coin visible on vendor trash even when you are away from a vendor."
+            or "Shows a gold coin marker on vendor trash in your bags.",
         "alwaysShowCoin"
     )
 
@@ -141,7 +139,7 @@ local function InitializePanel(self)
     hint:SetPoint("TOPLEFT", 16, -338)
     hint:SetWidth(540)
     hint:SetJustifyH("LEFT")
-    hint:SetText("Desaturation, darkness and the coin marker can be combined to your preference. /gvt opens this panel; /gvt diag prints Forever diagnostics.")
+    hint:SetText("Desaturation, darkness and the coin marker can be combined to your preference. /gvt opens this panel.")
 end
 
 panel:SetScript("OnShow", InitializePanel)
