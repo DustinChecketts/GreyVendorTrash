@@ -109,25 +109,17 @@ local Update = function(self, bag, slot)
 			local layer,level = container.garbage.icon:GetDrawLayer()
 			container.garbage:SetDrawLayer(layer, (level or 6) + 1)
 			container.garbage:SetAllPoints(container.garbage.icon)
-			container.garbage:SetColorTexture((51/255)*.2, (17/255)*.2, (6/255)*.2, 1)
+			container.garbage:SetColorTexture((51/255)*.2, (17/255)*.2, (6/255)*.2, .25)
 		end
 
-		local desaturate = GetSetting("desaturate", true)
-		local darkness = tonumber(GetSetting("darkness", .25)) or .25
-		darkness = math.max(0, math.min(.75, darkness))
-		container.garbage:SetAlpha(darkness)
-		container.garbage:SetShown(desaturate and darkness > 0)
-		container.garbage.icon:SetDesaturated(desaturate)
-
-		local coin = EnsureCoin(self, container)
-		coin:SetShown(GetSetting("alwaysShowCoin", false))
+		container.garbage:Show()
+		container.garbage.icon:SetDesaturated(true)
 
 	else
 		local cache = Cache[self]
 		if (cache and cache.garbage) then
 			cache.garbage:Hide()
 			cache.garbage.icon:SetDesaturated(locked)
-			if cache.coin then cache.coin:Hide() end
 		end
 	end
 end
@@ -398,7 +390,7 @@ end
 	-- Addon version
 	-- *Keyword substitution requires the packager,
 	-- and does not affect direct GitHub repo pulls.
-	local version = "1.1.1"
+	local version = "1.0.19-Release"
 	if (version:find("project%-version")) then
 		version = "Development"
 	end
