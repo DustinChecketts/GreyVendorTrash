@@ -109,7 +109,7 @@ local Update = function(self, bag, slot)
 			local layer,level = container.garbage.icon:GetDrawLayer()
 			container.garbage:SetDrawLayer(layer, (level or 6) + 1)
 			container.garbage:SetAllPoints(container.garbage.icon)
-			container.garbage:SetColorTexture(0, 0, 0, 1)
+			container.garbage:SetColorTexture((51/255)*.2, (17/255)*.2, (6/255)*.2, 1)
 		end
 
 		local desaturate = GetSetting("desaturate", true)
