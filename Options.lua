@@ -3,6 +3,10 @@
 GreyVendorTrash = GreyVendorTrash or {}
 local GVT = GreyVendorTrash
 
+-- The settings UI belongs to the Forever implementation. Classic/TBC keeps
+-- the proven pre-Forever behavior unchanged.
+if not GVT.UseForeverImplementation then return end
+
 local DEFAULTS = {
     desaturate = true,
     alwaysShowCoin = false,
