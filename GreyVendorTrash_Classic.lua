@@ -109,17 +109,25 @@ local Update = function(self, bag, slot)
 			local layer,level = container.garbage.icon:GetDrawLayer()
 			container.garbage:SetDrawLayer(layer, (level or 6) + 1)
 			container.garbage:SetAllPoints(container.garbage.icon)
-			container.garbage:SetColorTexture((51/255)*.2, (17/255)*.2, (6/255)*.2, .25)
+			container.garbage:SetColorTexture(0, 0, 0, 1)
 		end
 
-		container.garbage:Show()
-		container.garbage.icon:SetDesaturated(true)
+		local desaturate = GetSetting("desaturate", true)
+		local darkness = tonumber(GetSetting("darkness", .25)) or .25
+		darkness = math.max(0, math.min(.75, darkness))
+		container.garbage:SetAlpha(darkness)
+		container.garbage:SetShown(desaturate and darkness > 0)
+		container.garbage.icon:SetDesaturated(desaturate)
+
+		local coin = EnsureCoin(self, container)
+		coin:SetShown(GetSetting("alwaysShowCoin", false))
 
 	else
 		local cache = Cache[self]
 		if (cache and cache.garbage) then
 			cache.garbage:Hide()
 			cache.garbage.icon:SetDesaturated(locked)
+			if cache.coin then cache.coin:Hide() end
 		end
 	end
 end
