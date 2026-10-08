@@ -78,7 +78,7 @@ local function UpdateButton(button, bag, slot)
         quality = Compat.GetItemQuality(info.hyperlink)
     end
 
-    local isTrash = quality == 0 or Compat.GetItemQuality(info.hyperlink) == 0
+    local isTrash = quality == 0
     local locked = info.isLocked == true
     local desaturate = GVT:GetSetting("desaturate")
 
@@ -189,6 +189,10 @@ eventFrame:SetScript("OnEvent", function(_, event)
 
     GVT:RefreshAll()
 end)
+
+-- Do not hook global item-button styling functions here. Merchant, buyback,
+-- bank and guild-bank UIs share them with bags; bag refresh hooks/events above
+-- give us all the coverage we need without leaking styling into other frames.
 
 GVT.UpdateButton = UpdateButton
 GVT.UpdateContainer = UpdateContainer
