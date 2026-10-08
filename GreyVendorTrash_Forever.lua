@@ -78,7 +78,7 @@ local function UpdateButton(button, bag, slot)
         quality = Compat.GetItemQuality(info.hyperlink)
     end
 
-    local isTrash = quality == 0
+    local isTrash = quality == 0 or Compat.GetItemQuality(info.hyperlink) == 0
     local locked = info.isLocked == true
     local desaturate = GVT:GetSetting("desaturate")
 
