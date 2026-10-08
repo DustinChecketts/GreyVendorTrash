@@ -82,11 +82,11 @@ local function CreateDarknessSlider(parent, y)
     slider:SetWidth(260)
     slider:SetMinMaxValues(0, 75)
     slider:SetValueStep(5)
-    slider:SetObeyStepOnDrag(true)
+    if slider.SetObeyStepOnDrag then slider:SetObeyStepOnDrag(true) end
 
-    _G[slider:GetName() .. "Low"]:SetText("Original")
-    _G[slider:GetName() .. "High"]:SetText("Darker")
-    _G[slider:GetName() .. "Text"]:SetText("")
+    if _G[slider:GetName() .. "Low"] then _G[slider:GetName() .. "Low"]:SetText("0%") end
+    if _G[slider:GetName() .. "High"] then _G[slider:GetName() .. "High"]:SetText("75%") end
+    if _G[slider:GetName() .. "Text"] then _G[slider:GetName() .. "Text"]:SetText("") end
 
     local function UpdateValueText(percent)
         valueText:SetText(string.format("%d%%", percent))
@@ -94,6 +94,9 @@ local function CreateDarknessSlider(parent, y)
 
     local initial = math.floor((tonumber(GVT:GetSetting("darkness")) or 0) * 100 + 0.5)
     slider:SetValue(initial)
+    slider:SetScript("OnShow", function(self)
+        self:SetValue(math.floor((tonumber(GVT:GetSetting("darkness")) or .25) * 100 + .5))
+    end)
     UpdateValueText(initial)
 
     slider:SetScript("OnValueChanged", function(_, value)
@@ -145,7 +148,11 @@ local function InitializePanel(self)
     defaults:SetText("Defaults")
     defaults:SetScript("OnClick", function()
         GVT:ResetSettings()
-        self.initialized = nil
+        for _, child in ipairs({self:GetChildren()}) do
+            if child.GetObjectType and child:GetObjectType() == "CheckButton" then
+                -- Checkboxes are refreshed by re-opening the settings panel.
+            end
+        end
         self:Hide()
         self:Show()
     end)
