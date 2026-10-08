@@ -47,8 +47,7 @@ function Compat.GetItemQuality(item)
     if not item then return nil end
 
     if C_Item and C_Item.GetItemInfo then
-        local _, _, quality = C_Item.GetItemInfo(item)
-        if quality ~= nil then return quality end
+        return select(3, C_Item.GetItemInfo(item))
     end
 
     if GetItemInfo then
